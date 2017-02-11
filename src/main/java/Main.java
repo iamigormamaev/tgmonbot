@@ -2,18 +2,21 @@ import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.telegrambots.exceptions.TelegramApiRequestException;
 
-/**
- * Created by Игорь on 11.02.2017.
- */
 public class Main {
+    private static MyMonitoringBot myMonitoringBot;
+
     public static void main(String[] args) {
         ApiContextInitializer.init();
         TelegramBotsApi botsApi = new TelegramBotsApi();
+        myMonitoringBot = new MyMonitoringBot();
         try {
-            botsApi.registerBot(new MyMonitoringBot());
+            botsApi.registerBot(myMonitoringBot);
         } catch (TelegramApiRequestException e) {
             e.printStackTrace();
         }
+    }
 
+    public static MyMonitoringBot getMyMonitoringBot() {
+        return myMonitoringBot;
     }
 }
