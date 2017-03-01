@@ -8,6 +8,13 @@ public class Event {
     private boolean isStarted;
     private boolean isFinished;
 
+    public Event(User user, Date date) {
+        this.user = user;
+        this.date = date;
+        isStarted = false;
+        isFinished = false;
+    }
+
     public User getUser() {
         return user;
     }
@@ -38,5 +45,10 @@ public class Event {
 
     public void setFinished(boolean finished) {
         isFinished = finished;
+    }
+
+    @Override
+    public String toString() {
+        return user.toString() + " " + date;
     }
 }
