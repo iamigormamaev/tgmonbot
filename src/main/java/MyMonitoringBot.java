@@ -11,16 +11,19 @@ public class MyMonitoringBot extends TelegramLongPollingBot {
 
     public MyMonitoringBot() {
         Timer timer = new Timer(true);
-        timer.schedule(new MainTimerTask(), 0, 86400000);
+//        timer.schedule(new MainTimerTask(), 0, 86400000);
     }
 
     public void onUpdateReceived(Update update) {
 
 
-        if (update.hasMessage() && update.getMessage().hasText() && !LocalStore.getInstance().getChats().containsKey(update.getMessage().getChatId())) {
+        if (update.hasMessage() &&
+                update.getMessage().hasText() &&
+                !LocalStore.getInstance().getChats().containsKey(update.getMessage().getChatId())) {
             LocalStore.getInstance().getChats().put(update.getMessage().getChatId(), new MyChat(update.getMessage().getChat()));
             myOnUpdateReceived(update, LocalStore.getInstance().getChats().get(update.getMessage().getChatId()));
-        } else myOnUpdateReceived(update, LocalStore.getInstance().getChats().get(update.getMessage().getChatId()));
+        }
+        else myOnUpdateReceived(update, LocalStore.getInstance().getChats().get(update.getMessage().getChatId()));
 
 
 

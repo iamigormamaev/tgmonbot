@@ -38,6 +38,10 @@ public class LocalStore {
         new MainTimerTask().run();
     }
 
+    public void deleteEvent(Event event) {
+        this.eventsList.remove(event);
+    }
+
     public List<Event> getEventsList() {
         return eventsList;
     }
@@ -45,6 +49,7 @@ public class LocalStore {
     public Map<String, User> getRegisteredUsers() {
         return registeredUsers;
     }
+
     public Map<Long, MyChat> getChats() {
         return chats;
     }

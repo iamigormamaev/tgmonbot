@@ -1,6 +1,4 @@
-import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 
 public class MainTimerTask extends TimerTask {
@@ -21,14 +19,20 @@ public class MainTimerTask extends TimerTask {
         currDate.setHours(0);
         currDate.setMinutes(0);
 
+
+        List<Event> tempEventsForWork = new ArrayList<>();
+        tempEventsForWork.addAll(LocalStore.getInstance().getEventsList());
+
+
         for (Event event :
-                LocalStore.getInstance().getEventsList()) {
+                tempEventsForWork) {
             Date eventDateWithoutTime = new Date(event.getDate().getTime());
             eventDateWithoutTime.setSeconds(0);
             eventDateWithoutTime.setHours(0);
             eventDateWithoutTime.setMinutes(0);
-            if (eventDateWithoutTime.equals(currDate)) {
+            if (eventDateWithoutTime.equals(currDate) && event.getDate().after(new Date(System.currentTimeMillis()))) {
                 timer.schedule(new EventTimerTask(event), event.getDate());
+                LocalStore.getInstance().deleteEvent(event);
             }
         }
     }
