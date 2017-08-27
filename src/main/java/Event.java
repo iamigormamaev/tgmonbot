@@ -3,12 +3,14 @@ import org.telegram.telegrambots.api.objects.User;
 import java.util.Date;
 
 public class Event {
+    private User author;
     private User user;
     private Date date;
     private boolean isStarted;
     private boolean isFinished;
 
-    public Event(User user, Date date) {
+    public Event(User author, User user, Date date) {
+        this.author = author;
         this.user = user;
         this.date = date;
         isStarted = false;

@@ -43,7 +43,7 @@ public class EventParser {
                         date.setHours(Config.EVENT_HOURS);
                         date.setMinutes(Config.EVENT_MINUTES);
                         date.setSeconds(Config.EVENT_SECONDS);
-                        result.add(new Event(LocalStore.getInstance().getRegisteredUsers().get(argsStrings[0]), date));
+                        result.add(new Event(update.getMessage().getFrom(),LocalStore.getInstance().getRegisteredUsers().get(argsStrings[0]), date));
 
                     } catch (ParseException e) {
                         Main.getMyMonitoringBot().sendMessage(update.getMessage().getChatId(), Strings.CANT_PARSE_DATE + argsStrings[1]);
