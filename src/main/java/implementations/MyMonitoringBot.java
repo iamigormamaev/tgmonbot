@@ -20,8 +20,6 @@ public class MyMonitoringBot extends TelegramLongPollingBot {
     }
 
     public void onUpdateReceived(Update update) {
-
-
         if (update.hasMessage() &&
                 update.getMessage().hasText() &&
                 !InMemoryLocalStore.getInstance().getChats().containsKey(update.getMessage().getChatId())) {
@@ -29,26 +27,6 @@ public class MyMonitoringBot extends TelegramLongPollingBot {
             myOnUpdateReceived(update, InMemoryLocalStore.getInstance().getChats().get(update.getMessage().getChatId()));
         }
         else myOnUpdateReceived(update, InMemoryLocalStore.getInstance().getChats().get(update.getMessage().getChatId()));
-
-
-
-        /*        System.out.println(update);
-        if (update.hasMessage() && update.getMessage().hasText()) {
-            this.update = update;
-            Timer timer = new Timer(true);
-            timer.schedule(new implementations.MainTimerTask(), 0, 3000);
-
-        }
-        if (update.hasMessage() && update.getMessage().hasText()) {
-            SendMessage message = new SendMessage() // Create a SendMessage object with mandatory fields
-                    .setChatId(update.getMessage().getChatId())
-                    .setText(update.getMessage().getText());
-            try {
-                sendMessage(message); // Call method to send the message
-            } catch (TelegramApiException e) {
-                e.printStackTrace();
-            }
-        }*/
     }
 
     public String getBotUsername() {

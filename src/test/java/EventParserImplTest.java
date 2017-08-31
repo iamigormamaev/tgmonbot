@@ -1,6 +1,6 @@
 import Exceptions.DateParseException;
 import Exceptions.NotEnoughArgsToParseException;
-import Exceptions.NotRegistregUserException;
+import Exceptions.NotRegisteredUserException;
 import implementations.Event;
 import implementations.EventParserImpl;
 import interfaces.EventParser;
@@ -65,7 +65,7 @@ public class EventParserImplTest {
                 eventParser.parse("    igor 11.09.2017 15:00 Купить\nколбасы   ", author));
     }
 
-    @Test(expected = NotRegistregUserException.class)
+    @Test(expected = NotRegisteredUserException.class)
     public void parse_takeNonExistingUser_throwNotRegistregUserException() throws Exception {
         assertEquals(new Event(author, igor, new Date(1505131200000L), "Купить колбасы"),
                 eventParser.parse("smiigor 11.09.2017 15:00 Купить колбасы", author));
@@ -83,7 +83,7 @@ public class EventParserImplTest {
                 eventParser.parse("igor 11.09.2017 15:00", author));
     }
 
-    @Test(expected = NotRegistregUserException.class)
+    @Test(expected = NotRegisteredUserException.class)
     public void parse_takeNoUser_throwNotRegistregUserException() throws Exception {
         assertEquals(new Event(author, igor, new Date(1505131200000L), "Купить колбасы"),
                 eventParser.parse("11.09.2017 15:00 Купить колбасы", author));

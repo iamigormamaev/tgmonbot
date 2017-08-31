@@ -2,7 +2,7 @@ package implementations;
 
 import Exceptions.DateParseException;
 import Exceptions.NotEnoughArgsToParseException;
-import Exceptions.NotRegistregUserException;
+import Exceptions.NotRegisteredUserException;
 
 import interfaces.EventParser;
 import org.telegram.telegrambots.api.objects.User;
@@ -13,17 +13,20 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.Map;
+import java.util.logging.Logger;
 
 
 public class EventParserImpl implements EventParser {
+    private final static Logger LOGGER = Logger.getLogger(EventParserImpl.class.getName());
     private Map<String, User> registeredUsers;
 
     public EventParserImpl(Map<String, User> registeredUsers) {
         this.registeredUsers = registeredUsers;
     }
 
-    public Event parse(String inString, User author) throws NotEnoughArgsToParseException, NotRegistregUserException, DateParseException {
+    public Event parse(String inString, User author) throws NotEnoughArgsToParseException, NotRegisteredUserException, DateParseException {
         try {
+            LOGGER.info("parsing string: \"" + inString + "\" author: " + author);
             inString = inString.trim();
             String[] words = inString.split("\\s");
             String userName = words[0];
@@ -39,7 +42,8 @@ public class EventParserImpl implements EventParser {
                 userName = userName.substring(1);
             }
             if (!registeredUsers.containsKey(userName)) {
-                throw new NotRegistregUserException();
+                LOGGER.warning("NotRegisteredUserException was throw for string: \""+ inString + "\"");
+                throw new NotRegisteredUserException();
             }
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
@@ -50,8 +54,10 @@ public class EventParserImpl implements EventParser {
             return resultEvent;
 
         } catch (ArrayIndexOutOfBoundsException e) {
+            LOGGER.warning("NotEnoughArgsToParseException was throw for string: \""+ inString + "\"");
             throw new NotEnoughArgsToParseException();
         } catch (DateTimeParseException e) {
+            LOGGER.warning("DateParseException was throw for string: \""+ inString + "\"");
             throw new DateParseException();
         }
 
