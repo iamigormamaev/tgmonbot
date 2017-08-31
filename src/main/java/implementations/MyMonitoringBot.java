@@ -1,8 +1,13 @@
+package implementations;
+
+import interfaces.Config;
+import interfaces.Strings;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 
@@ -11,7 +16,7 @@ public class MyMonitoringBot extends TelegramLongPollingBot {
 
     public MyMonitoringBot() {
         Timer timer = new Timer(true);
-//        timer.schedule(new MainTimerTask(), 0, 86400000);
+//        timer.schedule(new implementations.MainTimerTask(), 0, 86400000);
     }
 
     public void onUpdateReceived(Update update) {
@@ -19,11 +24,11 @@ public class MyMonitoringBot extends TelegramLongPollingBot {
 
         if (update.hasMessage() &&
                 update.getMessage().hasText() &&
-                !LocalStore.getInstance().getChats().containsKey(update.getMessage().getChatId())) {
-            LocalStore.getInstance().getChats().put(update.getMessage().getChatId(), new MyChat(update.getMessage().getChat()));
-            myOnUpdateReceived(update, LocalStore.getInstance().getChats().get(update.getMessage().getChatId()));
+                !InMemoryLocalStore.getInstance().getChats().containsKey(update.getMessage().getChatId())) {
+            InMemoryLocalStore.getInstance().getChats().put(update.getMessage().getChatId(), new MyChat(update.getMessage().getChat()));
+            myOnUpdateReceived(update, InMemoryLocalStore.getInstance().getChats().get(update.getMessage().getChatId()));
         }
-        else myOnUpdateReceived(update, LocalStore.getInstance().getChats().get(update.getMessage().getChatId()));
+        else myOnUpdateReceived(update, InMemoryLocalStore.getInstance().getChats().get(update.getMessage().getChatId()));
 
 
 
@@ -31,7 +36,7 @@ public class MyMonitoringBot extends TelegramLongPollingBot {
         if (update.hasMessage() && update.getMessage().hasText()) {
             this.update = update;
             Timer timer = new Timer(true);
-            timer.schedule(new MainTimerTask(), 0, 3000);
+            timer.schedule(new implementations.MainTimerTask(), 0, 3000);
 
         }
         if (update.hasMessage() && update.getMessage().hasText()) {
@@ -65,7 +70,7 @@ public class MyMonitoringBot extends TelegramLongPollingBot {
             System.out.println(command);
             switch (command) {
                 case "/start":
-                    LocalStore.getInstance().userRegistration(update);
+                    InMemoryLocalStore.getInstance().userRegistration(update);
                     break;
                 case "/add":
                     sendMessage(update.getMessage().getChatId(), Strings.ADD_EVENT);
@@ -75,9 +80,9 @@ public class MyMonitoringBot extends TelegramLongPollingBot {
                     break;
                 default:
                     if (myChat.getPreviousCommand() == Command.ADD || myChat.getPreviousCommand() == Command.NOTHING) {
-                        List<Event> events = EventParser.getInstance().parse(update);
+                        List<Event> events = new ArrayList(); // TODO implementations.EventParserImpl.getInstance().parse(update);
                         if (!events.isEmpty()) {
-                            LocalStore.getInstance().addEvents(events);
+                            InMemoryLocalStore.getInstance().addEvents(events);
                             sendMessage(myChat.getId(), Strings.EVENTS_ADDED);
                         }
 

@@ -1,3 +1,5 @@
+package interfaces;
+
 /**
  * Created by Игорь on 11.02.2017.
  */

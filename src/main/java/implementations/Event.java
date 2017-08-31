@@ -1,3 +1,5 @@
+package implementations;
+
 import org.telegram.telegrambots.api.objects.User;
 
 import java.util.Date;
@@ -6,13 +8,17 @@ public class Event {
     private User author;
     private User user;
     private Date date;
+    private String message;
     private boolean isStarted;
     private boolean isFinished;
 
-    public Event(User author, User user, Date date) {
+
+
+    public Event(User author, User user, Date date, String message) {
         this.author = author;
         this.user = user;
         this.date = date;
+        this.message = message;
         isStarted = false;
         isFinished = false;
     }
@@ -50,11 +56,6 @@ public class Event {
     }
 
     @Override
-    public String toString() {
-        return user.toString() + " " + date;
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -74,5 +75,17 @@ public class Event {
         result = 31 * result + (isStarted ? 1 : 0);
         result = 31 * result + (isFinished ? 1 : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Event{" +
+                "author=" + author +
+                ", user=" + user +
+                ", date=" + date +
+                ", message='" + message + '\'' +
+                ", isStarted=" + isStarted +
+                ", isFinished=" + isFinished +
+                '}';
     }
 }

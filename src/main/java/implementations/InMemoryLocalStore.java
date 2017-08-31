@@ -1,23 +1,27 @@
+package implementations;
+
+import interfaces.LocalStore;
+import interfaces.Strings;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.api.objects.User;
 
 import java.util.*;
 
-public class LocalStore {
-    private static LocalStore instance = new LocalStore();
+public class InMemoryLocalStore implements LocalStore {
+    private static InMemoryLocalStore instance = new InMemoryLocalStore();
     private List<Event> eventsList;
     private Map<String, User> registeredUsers;
     private Map<Long, MyChat> chats;
     private Map<User, MyChat> usersToChat;
 
-    private LocalStore() {
+    private InMemoryLocalStore() {
         eventsList = new ArrayList<>();
         registeredUsers = new TreeMap<>();
         chats = new HashMap<>();
         usersToChat = new HashMap<>();
     }
 
-    public static LocalStore getInstance() {
+    public static InMemoryLocalStore getInstance() {
         return instance;
     }
 

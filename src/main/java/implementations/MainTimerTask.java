@@ -1,3 +1,5 @@
+package implementations;
+
 import java.util.*;
 
 
@@ -5,11 +7,11 @@ public class MainTimerTask extends TimerTask {
 
     public void run() {
 /*        try {
-            Update update = Main.getMyMonitoringBot().getUpdate();
+            Update update = implementations.Main.getMyMonitoringBot().getUpdate();
             SendMessage message = new SendMessage() // Create a SendMessage object with mandatory fields
                     .setChatId(update.getMessage().getChatId())
                     .setText("lol " + System.currentTimeMillis());
-            Main.getMyMonitoringBot().sendMessage(message); // Call method to send the message
+            implementations.Main.getMyMonitoringBot().sendMessage(message); // Call method to send the message
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }*/
@@ -21,7 +23,7 @@ public class MainTimerTask extends TimerTask {
 
 
         List<Event> tempEventsForWork = new ArrayList<>();
-        tempEventsForWork.addAll(LocalStore.getInstance().getEventsList());
+        tempEventsForWork.addAll(InMemoryLocalStore.getInstance().getEventsList());
 
 
         for (Event event :
@@ -32,7 +34,7 @@ public class MainTimerTask extends TimerTask {
             eventDateWithoutTime.setMinutes(0);
             if (eventDateWithoutTime.equals(currDate) && event.getDate().after(new Date(System.currentTimeMillis()))) {
                 timer.schedule(new EventTimerTask(event), event.getDate());
-                LocalStore.getInstance().deleteEvent(event);
+                InMemoryLocalStore.getInstance().deleteEvent(event);
             }
         }
     }
