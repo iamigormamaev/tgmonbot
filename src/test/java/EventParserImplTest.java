@@ -1,7 +1,7 @@
 import Exceptions.DateParseException;
 import Exceptions.NotEnoughArgsToParseException;
 import Exceptions.NotRegisteredUserException;
-import implementations.Event;
+import models.Event;
 import implementations.EventParserImpl;
 import interfaces.EventParser;
 import org.junit.Before;
@@ -94,7 +94,6 @@ public class EventParserImplTest {
         assertEquals(new Event(author, igor, new Date(1505131200000L), "Купить колбасы"),
                 eventParser.parse("igor Купить колбасы", author));
     }
-
 
 
 }

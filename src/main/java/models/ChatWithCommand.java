@@ -1,15 +1,13 @@
-package implementations;
+package models;
 
+import implementations.Command;
 import org.telegram.telegrambots.api.objects.Chat;
 
-/**
- * Created by Игорь on 28.02.2017.
- */
-public class MyChat {
+public class ChatWithCommand {
     private Chat chat;
     private Command previousCommand;
 
-    public MyChat(Chat chat) {
+    public ChatWithCommand(Chat chat) {
         this.chat = chat;
         previousCommand = Command.NOTHING;
     }

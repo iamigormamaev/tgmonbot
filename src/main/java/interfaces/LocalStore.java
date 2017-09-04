@@ -1,12 +1,13 @@
 package interfaces;
 
-import implementations.Event;
-import implementations.MyChat;
+import models.Event;
+import models.ChatWithCommand;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.api.objects.User;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 
 public interface LocalStore {
 
@@ -20,7 +21,9 @@ public interface LocalStore {
 
     Map<String, User> getRegisteredUsers();
 
-    Map<Long, MyChat> getChats();
+    Map<Long, ChatWithCommand> getChats();
 
-    Map<User, MyChat> getUsersToChat();
+    Map<User, ChatWithCommand> getUsersToChat();
+
+    Queue<Update> getUpdateQueue();
 }

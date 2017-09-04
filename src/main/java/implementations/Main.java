@@ -5,20 +5,20 @@ import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.telegrambots.exceptions.TelegramApiRequestException;
 
 public class Main {
-    private static MyMonitoringBot myMonitoringBot;
+    private static TcsMonitoringBot tcsMonitoringBot;
 
     public static void main(String[] args) {
         ApiContextInitializer.init();
         TelegramBotsApi botsApi = new TelegramBotsApi();
-        myMonitoringBot = new MyMonitoringBot();
+        tcsMonitoringBot = new TcsMonitoringBot();
         try {
-            botsApi.registerBot(myMonitoringBot);
+            botsApi.registerBot(tcsMonitoringBot);
         } catch (TelegramApiRequestException e) {
             e.printStackTrace();
         }
     }
 
-    public static MyMonitoringBot getMyMonitoringBot() {
-        return myMonitoringBot;
+    public static TcsMonitoringBot getTcsMonitoringBot() {
+        return tcsMonitoringBot;
     }
 }

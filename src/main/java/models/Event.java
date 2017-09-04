@@ -1,4 +1,4 @@
-package implementations;
+package models;
 
 import org.telegram.telegrambots.api.objects.User;
 

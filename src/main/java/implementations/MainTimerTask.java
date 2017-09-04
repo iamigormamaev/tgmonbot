@@ -1,5 +1,7 @@
 package implementations;
 
+import models.Event;
+
 import java.util.*;
 
 
@@ -7,11 +9,11 @@ public class MainTimerTask extends TimerTask {
 
     public void run() {
 /*        try {
-            Update update = implementations.Main.getMyMonitoringBot().getUpdate();
+            Update update = implementations.Main.getTcsMonitoringBot().getUpdate();
             SendMessage message = new SendMessage() // Create a SendMessage object with mandatory fields
                     .setChatId(update.getMessage().getChatId())
                     .setText("lol " + System.currentTimeMillis());
-            implementations.Main.getMyMonitoringBot().sendMessage(message); // Call method to send the message
+            implementations.Main.getTcsMonitoringBot().sendMessage(message); // Call method to send the message
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }*/

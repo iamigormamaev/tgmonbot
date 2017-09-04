@@ -3,7 +3,7 @@ package interfaces;
 import Exceptions.DateParseException;
 import Exceptions.NotEnoughArgsToParseException;
 import Exceptions.NotRegisteredUserException;
-import implementations.Event;
+import models.Event;
 import org.telegram.telegrambots.api.objects.User;
 
 public interface EventParser  {

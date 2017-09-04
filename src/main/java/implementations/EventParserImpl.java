@@ -5,6 +5,7 @@ import Exceptions.NotEnoughArgsToParseException;
 import Exceptions.NotRegisteredUserException;
 
 import interfaces.EventParser;
+import models.Event;
 import org.telegram.telegrambots.api.objects.User;
 
 import java.time.LocalDateTime;
