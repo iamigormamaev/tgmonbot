@@ -63,4 +63,9 @@ public class ForTestsLocalStore implements LocalStore {
     public Map<User, ChatWithCommand> getUsersToChat() {
         return usersToChat;
     }
+
+    @Override
+    public Queue<Update> getUpdateQueue() {
+        return null;
+    }
 }

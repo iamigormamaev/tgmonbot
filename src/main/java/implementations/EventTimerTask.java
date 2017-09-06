@@ -14,6 +14,6 @@ public class EventTimerTask extends TimerTask {
 
     @Override
     public void run() {
-        Main.getTcsMonitoringBot().sendMessage(InMemoryLocalStore.getInstance().getUsersToChat().get(event.getUser()).getId(), "Завтра ты дежуришь с 9:00!");
+        Main.getTcsMonitoringBot().sendMessage(CollectionsLocalStore.getInstance().getUsersToChat().get(event.getUser()).getId(), "Завтра ты дежуришь с 9:00!");
     }
 }

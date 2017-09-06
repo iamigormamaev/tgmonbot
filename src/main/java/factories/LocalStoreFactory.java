@@ -1,10 +1,10 @@
 package factories;
 
-import implementations.InMemoryLocalStore;
+import implementations.CollectionsLocalStore;
 import interfaces.LocalStore;
 
 public class LocalStoreFactory {
     public LocalStore getDefaultLocalStore() {
-        return InMemoryLocalStore.getInstance();
+        return CollectionsLocalStore.getInstance();
     }
 }

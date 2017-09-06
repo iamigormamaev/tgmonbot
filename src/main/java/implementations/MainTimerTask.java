@@ -25,7 +25,7 @@ public class MainTimerTask extends TimerTask {
 
 
         List<Event> tempEventsForWork = new ArrayList<>();
-        tempEventsForWork.addAll(InMemoryLocalStore.getInstance().getEventsList());
+        tempEventsForWork.addAll(CollectionsLocalStore.getInstance().getEventsList());
 
 
         for (Event event :
@@ -36,7 +36,7 @@ public class MainTimerTask extends TimerTask {
             eventDateWithoutTime.setMinutes(0);
             if (eventDateWithoutTime.equals(currDate) && event.getDate().after(new Date(System.currentTimeMillis()))) {
                 timer.schedule(new EventTimerTask(event), event.getDate());
-                InMemoryLocalStore.getInstance().deleteEvent(event);
+                CollectionsLocalStore.getInstance().deleteEvent(event);
             }
         }
     }

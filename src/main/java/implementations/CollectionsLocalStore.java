@@ -9,15 +9,15 @@ import org.telegram.telegrambots.api.objects.User;
 
 import java.util.*;
 
-public class InMemoryLocalStore implements LocalStore {
-    private static InMemoryLocalStore instance = new InMemoryLocalStore();
+public class CollectionsLocalStore implements LocalStore {
+    private static CollectionsLocalStore instance = new CollectionsLocalStore();
     private List<Event> eventsList;
     private Map<String, User> registeredUsers;
     private Map<Long, ChatWithCommand> chats;
     private Map<User, ChatWithCommand> usersToChat;
     private Queue<Update> updateQueue;
 
-    private InMemoryLocalStore() {
+    private CollectionsLocalStore() {
         eventsList = new ArrayList<>();
         registeredUsers = new TreeMap<>();
         chats = new HashMap<>();
@@ -25,7 +25,7 @@ public class InMemoryLocalStore implements LocalStore {
         updateQueue = new ArrayDeque<>();
     }
 
-    public static InMemoryLocalStore getInstance() {
+    public static CollectionsLocalStore getInstance() {
         return instance;
     }
 
