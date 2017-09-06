@@ -1,7 +1,11 @@
 package implementations;
 
 
+import Exceptions.DateParseException;
+import Exceptions.NotEnoughArgsToParseException;
+import Exceptions.NotRegisteredUserException;
 import factories.LocalStoreFactory;
+import interfaces.EventParser;
 import interfaces.LocalStore;
 import interfaces.Strings;
 import interfaces.UpdateHandler;
@@ -21,6 +25,7 @@ public class UpdateHandlerImpl implements UpdateHandler {
     private Update update = null;
     private ChatWithCommand chat = null;
     private TcsMonitoringBot bot = Main.getTcsMonitoringBot();
+    private EventParser eventParser = new EventParserImpl(localStore.getRegisteredUsers());
 
     @Override
     public void handleUpdate(Update update, ChatWithCommand chat) {
@@ -64,7 +69,7 @@ public class UpdateHandlerImpl implements UpdateHandler {
     }
 
     private void doStartCommand() {
-        InMemoryLocalStore.getInstance().userRegistration(update);
+        CollectionsLocalStore.getInstance().userRegistration(update);
     }
 
     private void doAddCommand() {
@@ -78,12 +83,25 @@ public class UpdateHandlerImpl implements UpdateHandler {
 
     private void doNothingCommand() {
         if (chat.getPreviousCommand() == Command.ADD || chat.getPreviousCommand() == Command.NOTHING) {
-            List<Event> events = new ArrayList(); // TODO implementations.EventParserImpl.getInstance().parse(update);
+            String[] inStrings = update.getMessage().getText().split("\n");
+            List<Event> events = new ArrayList<>();
+            for (String s :
+                    inStrings) {
+                try {
+                    Event e = eventParser.parse(s, update.getMessage().getFrom());
+                    events.add(e);
+                } catch (NotEnoughArgsToParseException e1) {
+                    bot.sendMessage(chat.getId(), Strings.WRONG_EVENT + s);
+                } catch (NotRegisteredUserException e1) {
+                    bot.sendMessage(chat.getId(), Strings.NOT_REGISTERED_USER + s);
+                } catch (DateParseException e1) {
+                    bot.sendMessage(chat.getId(), Strings.CANT_PARSE_DATE + s);
+                }
+            }
             if (!events.isEmpty()) {
-                InMemoryLocalStore.getInstance().addEvents(events);
+                CollectionsLocalStore.getInstance().addEvents(events);
                 bot.sendMessage(chat.getId(), Strings.EVENTS_ADDED);
             }
-
             chat.setPreviousCommand(Command.NOTHING);
         }
     }
@@ -92,8 +110,15 @@ public class UpdateHandlerImpl implements UpdateHandler {
     public void pollingUpdates() {
 
         while (true) {
-            update = updateQueue.poll();
-            if (updateQueue != null) {
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            if (updateQueue.peek()!=null) {
+                update = updateQueue.poll();
+                System.out.println(update);
                 if (update.hasMessage() && update.getMessage().hasText() && !localStore.getChats().containsKey(update.getMessage().getChatId())) {
                     localStore.getChats().put(update.getMessage().getChatId(), new ChatWithCommand(update.getMessage().getChat()));
                     chat = localStore.getChats().get(update.getMessage().getChatId());
@@ -103,6 +128,7 @@ public class UpdateHandlerImpl implements UpdateHandler {
                     handleUpdate(update, localStore.getChats().get(update.getMessage().getChatId()));
                 }
             }
+
         }
     }
 }
