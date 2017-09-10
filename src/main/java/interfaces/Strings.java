@@ -4,7 +4,8 @@ package interfaces;
  * Created by Игорь on 11.02.2017.
  */
 public interface Strings {
-    String SUCCESSFUL_REGISTRATION = "Вы успешно зарегистрированы! Чтобы добавить новое оповещение отправьте /add";
+    String SUCCESSFUL_REGISTRATION = "Вы успешно зарегистрированы! Чтобы добавить новое оповещение отправьте /add; \n" +
+            "Чтобы получить список созданных оповещений отправьте /list";
     String ALREADY_REGISTERED = "Вы были зарегестрированы ранее. Все хорошо.";
     String WRONG_EVENT = "Событие не добавлено. Невозможно распознать строку: ";
     String NOT_REGISTERED_USER = "Событие не добавлено. Пользователь не зарегистрирован: ";

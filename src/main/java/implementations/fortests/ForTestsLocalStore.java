@@ -68,4 +68,9 @@ public class ForTestsLocalStore implements LocalStore {
     public Queue<Update> getUpdateQueue() {
         return null;
     }
+
+    @Override
+    public List<Event> getEventsListFilterByAuthor(User author) {
+        return null;
+    }
 }

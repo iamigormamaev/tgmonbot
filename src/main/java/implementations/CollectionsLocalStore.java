@@ -70,4 +70,17 @@ public class CollectionsLocalStore implements LocalStore {
     public Queue<Update> getUpdateQueue() {
         return updateQueue;
     }
+
+    @Override
+    public List<Event> getEventsListFilterByAuthor(User author) {
+        List<Event> resultList = new ArrayList<>();
+        for (Event e :
+                eventsList) {
+            if (!e.isFinished() && e.getAuthor().getId().equals(author.getId())) {
+                resultList.add(e);
+            }
+        }
+        System.out.println("getEventsListFilterByAuthor, Author: " + author + ", list: "+ resultList);
+        return resultList;
+    }
 }

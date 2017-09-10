@@ -7,5 +7,4 @@ public interface Config {
     String BOT_TOKEN = "bot_token";
 
 
-
 }

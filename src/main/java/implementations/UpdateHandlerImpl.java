@@ -30,9 +30,7 @@ public class UpdateHandlerImpl implements UpdateHandler {
     @Override
     public void handleUpdate(Update update, ChatWithCommand chat) {
         if (update.hasMessage() && update.getMessage().hasText()) {
-
             Command command = checkCommand(update.getMessage().getText());
-
             System.out.println(command);
             switch (command) {
                 case START:
@@ -44,12 +42,15 @@ public class UpdateHandlerImpl implements UpdateHandler {
                 case DELETE:
                     doDeleteCommand();
                     break;
+                case LIST:
+                    doListCommand();
+                    break;
                 default:
                     doNothingCommand();
-
             }
         }
     }
+
 
     private Command checkCommand(String string) {
         if (string.contains("/")) {
@@ -61,6 +62,8 @@ public class UpdateHandlerImpl implements UpdateHandler {
                     return Command.ADD;
                 case "/delete":
                     return Command.DELETE;
+                case "/list":
+                    return Command.LIST;
                 default:
                     return Command.NOTHING;
             }
@@ -106,6 +109,15 @@ public class UpdateHandlerImpl implements UpdateHandler {
         }
     }
 
+    private void doListCommand() {
+        String fullMessageString = "Список созданных вами напоминаний (уже отработавшие не включены):\n";
+        for (Event e :
+                localStore.getEventsListFilterByAuthor(update.getMessage().getFrom())) {
+            fullMessageString = fullMessageString + e + "\n";
+        }
+        bot.sendMessage(chat.getId(), fullMessageString);
+    }
+
 
     public void pollingUpdates() {
 
@@ -116,7 +128,7 @@ public class UpdateHandlerImpl implements UpdateHandler {
                 e.printStackTrace();
             }
 
-            if (updateQueue.peek()!=null) {
+            if (updateQueue.peek() != null) {
                 update = updateQueue.poll();
                 System.out.println(update);
                 if (update.hasMessage() && update.getMessage().hasText() && !localStore.getChats().containsKey(update.getMessage().getChatId())) {
