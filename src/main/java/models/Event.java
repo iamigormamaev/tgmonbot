@@ -2,6 +2,7 @@ package models;
 
 import org.telegram.telegrambots.api.objects.User;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Event {
@@ -11,7 +12,6 @@ public class Event {
     private String message;
     private boolean isStarted;
     private boolean isFinished;
-
 
 
     public Event(User author, User user, Date date, String message) {
@@ -87,13 +87,16 @@ public class Event {
 
     @Override
     public String toString() {
-        return "Event{" +
+/*        return "Event{" +
                 "author=" + author +
                 ", user=" + user +
                 ", date=" + date +
                 ", message='" + message + '\'' +
                 ", isStarted=" + isStarted +
                 ", isFinished=" + isFinished +
-                '}';
+                '}';*/
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
+        return user.getFirstName() + " " + user.getLastName() + " (" + user.getUserName() + ") " + " " + dateFormat.format(date) + " " + message;
     }
 }

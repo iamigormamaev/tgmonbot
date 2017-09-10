@@ -26,4 +26,6 @@ public interface LocalStore {
     Map<User, ChatWithCommand> getUsersToChat();
 
     Queue<Update> getUpdateQueue();
+
+    List<Event> getEventsListFilterByAuthor(User author);
 }

@@ -30,13 +30,14 @@ public class MainTimerTask extends TimerTask {
 
         for (Event event :
                 tempEventsForWork) {
-            Date eventDateWithoutTime = new Date(event.getDate().getTime());
-            eventDateWithoutTime.setSeconds(0);
-            eventDateWithoutTime.setHours(0);
-            eventDateWithoutTime.setMinutes(0);
-            if (eventDateWithoutTime.equals(currDate) && event.getDate().after(new Date(System.currentTimeMillis()))) {
-                timer.schedule(new EventTimerTask(event), event.getDate());
-                CollectionsLocalStore.getInstance().deleteEvent(event);
+            if (!event.isFinished()) {
+                Date eventDateWithoutTime = new Date(event.getDate().getTime());
+                eventDateWithoutTime.setSeconds(0);
+                eventDateWithoutTime.setHours(0);
+                eventDateWithoutTime.setMinutes(0);
+                if (eventDateWithoutTime.equals(currDate) && event.getDate().after(new Date(System.currentTimeMillis()))) {
+                    timer.schedule(new EventTimerTask(event), event.getDate());
+                }
             }
         }
     }
