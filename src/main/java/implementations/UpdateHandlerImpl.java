@@ -111,7 +111,7 @@ public class UpdateHandlerImpl implements UpdateHandler {
 
         while (true) {
             try {
-                Thread.sleep(1);
+                Thread.sleep(10);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

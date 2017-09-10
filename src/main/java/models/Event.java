@@ -55,6 +55,14 @@ public class Event {
         isFinished = finished;
     }
 
+    public String getMessage() {
+        return message;
+    }
+
+    public User getAuthor() {
+        return author;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

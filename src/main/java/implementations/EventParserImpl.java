@@ -52,6 +52,7 @@ public class EventParserImpl implements EventParser {
             Date date = Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant());
             Event resultEvent = new Event(author, registeredUsers.get(userName), date, message.toString().trim());
 
+            LOGGER.info("success parsing: \"" + inString + "\" author: " + author);
             return resultEvent;
 
         } catch (ArrayIndexOutOfBoundsException e) {
