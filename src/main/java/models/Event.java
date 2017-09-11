@@ -101,9 +101,9 @@ public class Event {
     }
 
     public String getMessageWithAuthor() {
-        String lastName = user.getLastName() == null ? "" : user.getLastName();
-        String userName = user.getUserName() == null ? "" : " (" + user.getUserName() + ")";
-        return user.getFirstName() + " " + lastName + userName + ": " + message;
+        String lastName = author.getLastName() == null ? "" : author.getLastName();
+        String userName = author.getUserName() == null ? "" : " (" + author.getUserName() + ")";
+        return author.getFirstName() + " " + lastName + userName + ": " + message;
     }
 
     public String getMessageWithoutAuthor() {
