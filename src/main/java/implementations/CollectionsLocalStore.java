@@ -47,7 +47,7 @@ public class CollectionsLocalStore implements LocalStore {
     }
 
     public void deleteEvent(Event event) {
-        this.eventsList.remove(event);
+        event.setActive(false);
     }
 
     public List<Event> getEventsList() {
@@ -76,11 +76,11 @@ public class CollectionsLocalStore implements LocalStore {
         List<Event> resultList = new ArrayList<>();
         for (Event e :
                 eventsList) {
-            if (!e.isFinished() && e.getAuthor().getId().equals(author.getId())) {
+            if (e.isActive() && !e.isFinished() && e.getAuthor().getId().equals(author.getId())) {
                 resultList.add(e);
             }
         }
-        System.out.println("getEventsListFilterByAuthor, Author: " + author + ", list: "+ resultList);
+        System.out.println("getEventsListFilterByAuthor, Author: " + author + ", list: " + resultList);
         return resultList;
     }
 }

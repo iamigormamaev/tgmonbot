@@ -3,13 +3,26 @@ package models;
 import implementations.Command;
 import org.telegram.telegrambots.api.objects.Chat;
 
+import java.util.List;
+
 public class ChatWithCommand {
     private Chat chat;
     private Command previousCommand;
+    private List <Event> eventListForDeleteCommand = null;
+
+    public List<Event> getEventListForDeleteCommand() {
+        return eventListForDeleteCommand;
+    }
+
+    public void setEventListForDeleteCommand(List<Event> eventListForDeleteCommand) {
+        this.eventListForDeleteCommand = eventListForDeleteCommand;
+    }
 
     public ChatWithCommand(Chat chat) {
         this.chat = chat;
         previousCommand = Command.NOTHING;
+
+
     }
 
     public Long getId() {

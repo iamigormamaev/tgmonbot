@@ -30,7 +30,7 @@ public class MainTimerTask extends TimerTask {
 
         for (Event event :
                 tempEventsForWork) {
-            if (!event.isFinished()) {
+            if (!event.isStarted() && !event.isFinished()) {
                 Date eventDateWithoutTime = new Date(event.getDate().getTime());
                 eventDateWithoutTime.setSeconds(0);
                 eventDateWithoutTime.setHours(0);
