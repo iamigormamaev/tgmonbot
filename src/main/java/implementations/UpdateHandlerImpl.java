@@ -1,6 +1,7 @@
 package implementations;
 
 
+import Exceptions.DateFromPastException;
 import Exceptions.DateParseException;
 import Exceptions.NotEnoughArgsToParseException;
 import Exceptions.NotRegisteredUserException;
@@ -128,6 +129,8 @@ public class UpdateHandlerImpl implements UpdateHandler {
                     bot.sendMessage(chat.getId(), Strings.NOT_REGISTERED_USER + s);
                 } catch (DateParseException e1) {
                     bot.sendMessage(chat.getId(), Strings.CANT_PARSE_DATE + s);
+                } catch (DateFromPastException e) {
+                    bot.sendMessage(chat.getId(), Strings.DATE_FROM_PAST + s);
                 }
             }
             if (!events.isEmpty()) {

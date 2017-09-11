@@ -18,4 +18,5 @@ public interface Strings {
     String CANT_DELETE_EVENT = "Невозможно распознать номер события. Повторите удаление с отправки команды /delete";
     Object SUCCESSFUL_DELETE = "Успешно удалено событие: ";
     String EMPTY_LIST_OF_EVENTS = "У вас нет добавленных событий";
+    String DATE_FROM_PAST = "Событие не добавлено. Дата из прошлого: ";
 }
