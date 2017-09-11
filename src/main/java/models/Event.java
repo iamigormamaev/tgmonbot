@@ -12,6 +12,7 @@ public class Event {
     private String message;
     private boolean isStarted;
     private boolean isFinished;
+    private boolean isActive;
 
 
     public Event(User author, User user, Date date, String message) {
@@ -21,6 +22,16 @@ public class Event {
         this.message = message;
         isStarted = false;
         isFinished = false;
+        isActive = true;
+
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
     }
 
     public User getUser() {
