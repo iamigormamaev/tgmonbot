@@ -1,5 +1,6 @@
 package implementations;
 
+import Exceptions.DateFromPastException;
 import Exceptions.DateParseException;
 import Exceptions.NotEnoughArgsToParseException;
 import Exceptions.NotRegisteredUserException;
@@ -25,7 +26,7 @@ public class EventParserImpl implements EventParser {
         this.registeredUsers = registeredUsers;
     }
 
-    public Event parse(String inString, User author) throws NotEnoughArgsToParseException, NotRegisteredUserException, DateParseException {
+    public Event parse(String inString, User author) throws NotEnoughArgsToParseException, NotRegisteredUserException, DateParseException, DateFromPastException {
         try {
             LOGGER.info("parsing string: \"" + inString + "\" author: " + author);
             inString = inString.trim();
@@ -43,23 +44,28 @@ public class EventParserImpl implements EventParser {
                 userName = userName.substring(1);
             }
             if (!registeredUsers.containsKey(userName)) {
-                LOGGER.warning("NotRegisteredUserException was throw for string: \""+ inString + "\"");
+                LOGGER.warning("NotRegisteredUserException was throw for string: \"" + inString + "\"");
                 throw new NotRegisteredUserException();
             }
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
             LocalDateTime dateTime = LocalDateTime.parse(dateTimeString, formatter);
             Date date = Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant());
+
+            if (date.before(new Date(System.currentTimeMillis()))) {
+                LOGGER.warning("DateFromPastException was throw for string: \"" + inString + "\"");
+                throw new DateFromPastException();
+            }
             Event resultEvent = new Event(author, registeredUsers.get(userName), date, message.toString().trim());
 
             LOGGER.info("success parsing: \"" + inString + "\" author: " + author);
             return resultEvent;
 
         } catch (ArrayIndexOutOfBoundsException e) {
-            LOGGER.warning("NotEnoughArgsToParseException was throw for string: \""+ inString + "\"");
+            LOGGER.warning("NotEnoughArgsToParseException was throw for string: \"" + inString + "\"");
             throw new NotEnoughArgsToParseException();
         } catch (DateTimeParseException e) {
-            LOGGER.warning("DateParseException was throw for string: \""+ inString + "\"");
+            LOGGER.warning("DateParseException was throw for string: \"" + inString + "\"");
             throw new DateParseException();
         }
 

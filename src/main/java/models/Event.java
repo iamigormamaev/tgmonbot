@@ -66,10 +66,6 @@ public class Event {
         isFinished = finished;
     }
 
-    public String getMessage() {
-        return message;
-    }
-
     public User getAuthor() {
         return author;
     }
@@ -98,16 +94,20 @@ public class Event {
 
     @Override
     public String toString() {
-/*        return "Event{" +
-                "author=" + author +
-                ", user=" + user +
-                ", date=" + date +
-                ", message='" + message + '\'' +
-                ", isStarted=" + isStarted +
-                ", isFinished=" + isFinished +
-                '}';*/
-
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm");
-        return user.getFirstName() + " " + user.getLastName() + " (" + user.getUserName() + ") " + " " + dateFormat.format(date) + " " + message;
+        String lastName = user.getLastName() == null ? "" : user.getLastName();
+        String userName = user.getUserName() == null ? "" : " (" + user.getUserName() + ") ";
+        return user.getFirstName() + " " + lastName + userName + dateFormat.format(date) + " " + message;
     }
+
+    public String getMessageWithAuthor() {
+        String lastName = user.getLastName() == null ? "" : user.getLastName();
+        String userName = user.getUserName() == null ? "" : " (" + user.getUserName() + ")";
+        return user.getFirstName() + " " + lastName + userName + ": " + message;
+    }
+
+    public String getMessageWithoutAuthor() {
+        return message;
+    }
+
 }
