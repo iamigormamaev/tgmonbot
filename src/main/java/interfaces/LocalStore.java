@@ -11,21 +11,33 @@ import java.util.Queue;
 
 public interface LocalStore {
 
-    void userRegistration(Update update);
+    boolean isAlreadyRegisteredUser(User user);
+
+    void userRegistration(User user, ChatWithCommand chat);
 
     void addEvents(List<Event> eventsList);
 
     void deleteEvent(Event event);
 
-    List<Event> getEventsList();
+    List<Event> getEvents(boolean isActive, boolean isStarted, boolean isFinished);
 
-    Map<String, User> getRegisteredUsers();
+    ChatWithCommand getChatById (Long id);
 
-    Map<Long, ChatWithCommand> getChats();
+    boolean containsChatById(Long id);
 
-    Map<User, ChatWithCommand> getUsersToChat();
+    ChatWithCommand putToChats (Long id, ChatWithCommand chat);
 
-    Queue<Update> getUpdateQueue();
+    boolean isRegisteredUserName (String name);
+
+    User getUserByName (String name);
+
+    Update updateQueuePeek();
+
+    Update updateQueuePool();
+
+    boolean updateQueueAdd(Update update);
 
     List<Event> getEventsListFilterByAuthor(User author);
+
+    ChatWithCommand getChatByUser (User user);
 }

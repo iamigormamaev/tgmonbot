@@ -4,9 +4,12 @@ import Exceptions.DateFromPastException;
 import Exceptions.DateParseException;
 import Exceptions.NotEnoughArgsToParseException;
 import Exceptions.NotRegisteredUserException;
+import factories.LocalStoreFactory;
 import interfaces.EventParser;
+import interfaces.LocalStore;
 import models.Event;
 import org.telegram.telegrambots.api.objects.User;
+
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -18,10 +21,13 @@ import java.util.logging.Logger;
 
 public class EventParserImpl implements EventParser {
     private final static Logger LOGGER = Logger.getLogger(EventParserImpl.class.getName());
-    private Map<String, User> registeredUsers;
-    public EventParserImpl(Map<String, User> registeredUsers) {
-        this.registeredUsers = registeredUsers;
+
+    LocalStore localStore = new LocalStoreFactory().getDefaultLocalStore();
+
+    public EventParserImpl() {
+
     }
+
     public Event parse(String inString, User author) throws NotEnoughArgsToParseException, NotRegisteredUserException, DateParseException, DateFromPastException {
         try {
             LOGGER.info("parsing string: \"" + inString + "\" author: " + author);
@@ -33,7 +39,7 @@ public class EventParserImpl implements EventParser {
             if (userName.charAt(0) == '@') {
                 userName = userName.substring(1);
             }
-            if (!registeredUsers.containsKey(userName)) {
+            if (!localStore.isRegisteredUserName(userName)) {
                 dateTimeString = words[0] + " " + words[1];
                 userName = author.getUserName();
                 for (int i = 2; i < words.length; i++) {
@@ -51,7 +57,7 @@ public class EventParserImpl implements EventParser {
                 LOGGER.warning("DateFromPastException was throw for string: \"" + inString + "\"");
                 throw new DateFromPastException();
             }
-            Event resultEvent = new Event(author, registeredUsers.get(userName), date, message.toString().trim());
+            Event resultEvent = new Event(author, localStore.getUserByName(userName), date, message.toString().trim());
             LOGGER.info("success parsing: \"" + inString + "\" author: " + author);
             return resultEvent;
         } catch (ArrayIndexOutOfBoundsException e) {

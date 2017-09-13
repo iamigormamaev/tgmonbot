@@ -16,17 +16,15 @@ import org.telegram.telegrambots.api.objects.Update;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Queue;
 
 
 public class UpdateHandlerImpl implements UpdateHandler {
 
     private LocalStore localStore = new LocalStoreFactory().getDefaultLocalStore();
-    private Queue<Update> updateQueue = localStore.getUpdateQueue();
     private Update update = null;
     private ChatWithCommand chat = null;
     private TcsMonitoringBot bot = Main.getTcsMonitoringBot();
-    private EventParser eventParser = new EventParserImpl(localStore.getRegisteredUsers());
+    private EventParser eventParser = new EventParserImpl();
 
     @Override
     public void handleUpdate(Update update, ChatWithCommand chat) {
@@ -85,7 +83,16 @@ public class UpdateHandlerImpl implements UpdateHandler {
     }
 
     private void doStartCommand() {
-        CollectionsLocalStore.getInstance().userRegistration(update);
+
+        if (!localStore.isAlreadyRegisteredUser(update.getMessage().getFrom())) {
+            localStore.userRegistration(update.getMessage().getFrom(), new ChatWithCommand(update.getMessage().getChat()));
+            if (update.getMessage().getFrom().getUserName() == null) {
+                bot.sendMessage(update.getMessage().getChatId(), Strings.SUCCESSFUL_REGISTRATION_WITHOUT_USERNAME);
+            } else
+                bot.sendMessage(update.getMessage().getChatId(), Strings.SUCCESSFUL_REGISTRATION);
+        } else {
+            bot.sendMessage(update.getMessage().getChatId(), Strings.ALREADY_REGISTERED);
+        }
     }
 
     private void doAddCommand() {
@@ -134,7 +141,7 @@ public class UpdateHandlerImpl implements UpdateHandler {
                 }
             }
             if (!events.isEmpty()) {
-                CollectionsLocalStore.getInstance().addEvents(events);
+                localStore.addEvents(events);
                 bot.sendMessage(chat.getId(), Strings.EVENTS_ADDED);
             }
             chat.setPreviousCommand(Command.NOTHING);
@@ -146,7 +153,7 @@ public class UpdateHandlerImpl implements UpdateHandler {
         if (!listOfEventsString.equals(""))
             bot.sendMessage(chat.getId(), Strings.LIST_TEXT + listOfEventsString);
         else
-            bot.sendMessage(chat.getId(),Strings.EMPTY_LIST_OF_EVENTS);
+            bot.sendMessage(chat.getId(), Strings.EMPTY_LIST_OF_EVENTS);
     }
 
 
@@ -159,16 +166,16 @@ public class UpdateHandlerImpl implements UpdateHandler {
                 e.printStackTrace();
             }
 
-            if (updateQueue.peek() != null) {
-                update = updateQueue.poll();
+            if (localStore.updateQueuePeek() != null) {
+                update = localStore.updateQueuePool();
                 System.out.println(update);
-                if (update.hasMessage() && update.getMessage().hasText() && !localStore.getChats().containsKey(update.getMessage().getChatId())) {
-                    localStore.getChats().put(update.getMessage().getChatId(), new ChatWithCommand(update.getMessage().getChat()));
-                    chat = localStore.getChats().get(update.getMessage().getChatId());
+                if (update.hasMessage() && update.getMessage().hasText() && !localStore.containsChatById(update.getMessage().getChatId())) {
+                    localStore.putToChats(update.getMessage().getChatId(), new ChatWithCommand(update.getMessage().getChat()));
+                    chat = localStore.getChatById(update.getMessage().getChatId());
                     handleUpdate(update, chat);
                 } else {
-                    chat = localStore.getChats().get(update.getMessage().getChatId());
-                    handleUpdate(update, localStore.getChats().get(update.getMessage().getChatId()));
+                    chat = localStore.getChatById(update.getMessage().getChatId());
+                    handleUpdate(update, localStore.getChatById(update.getMessage().getChatId()));
                 }
             }
 
