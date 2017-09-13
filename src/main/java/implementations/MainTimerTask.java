@@ -1,11 +1,14 @@
 package implementations;
 
+import factories.LocalStoreFactory;
+import interfaces.LocalStore;
 import models.Event;
 
 import java.util.*;
 
 
 public class MainTimerTask extends TimerTask {
+    LocalStore localStore = new LocalStoreFactory().getDefaultLocalStore();
 
     public void run() {
 /*        try {
@@ -25,7 +28,7 @@ public class MainTimerTask extends TimerTask {
 
 
         List<Event> tempEventsForWork = new ArrayList<>();
-        tempEventsForWork.addAll(CollectionsLocalStore.getInstance().getEventsList());
+        tempEventsForWork.addAll(localStore.getEvents(true, false, false));
 
 
         for (Event event :

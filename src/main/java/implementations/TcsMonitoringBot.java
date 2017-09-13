@@ -14,7 +14,6 @@ import java.util.Timer;
 public class TcsMonitoringBot extends TelegramLongPollingBot {
 
     private LocalStore localStore = new LocalStoreFactory().getDefaultLocalStore();
-    private Queue<Update> updateQueue = localStore.getUpdateQueue();
 
     public TcsMonitoringBot() {
 
@@ -23,7 +22,7 @@ public class TcsMonitoringBot extends TelegramLongPollingBot {
     }
 
     public void onUpdateReceived(Update update) {
-        updateQueue.add(update);
+        localStore.updateQueueAdd(update);
     }
 
     public String getBotUsername() {

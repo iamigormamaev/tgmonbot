@@ -30,7 +30,7 @@ public class EventParserImplTest {
         registeredUsersMoc.put("masha", masha);
         registeredUsersMoc.put("katya", katya);
         registeredUsersMoc.put("author", author);
-        eventParser = new EventParserImpl(registeredUsersMoc);
+        eventParser = new EventParserImpl();
 
     }
     //[Тестируемый метод]_[Сценарий]_[Ожидаемое поведение].
