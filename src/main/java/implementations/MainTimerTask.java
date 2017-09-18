@@ -5,32 +5,23 @@ import interfaces.LocalStore;
 import models.Event;
 
 import java.util.*;
+import java.util.logging.Logger;
 
 
 public class MainTimerTask extends TimerTask {
-    LocalStore localStore = new LocalStoreFactory().getDefaultLocalStore();
+
+    private final static Logger LOGGER = Logger.getLogger(MainTimerTask.class.getName());
 
     public void run() {
-/*        try {
-            Update update = implementations.Main.getTcsMonitoringBot().getUpdate();
-            SendMessage message = new SendMessage() // Create a SendMessage object with mandatory fields
-                    .setChatId(update.getMessage().getChatId())
-                    .setText("lol " + System.currentTimeMillis());
-            implementations.Main.getTcsMonitoringBot().sendMessage(message); // Call method to send the message
-        } catch (TelegramApiException e) {
-            e.printStackTrace();
-        }*/
+        LocalStore localStore = new LocalStoreFactory().getDefaultLocalStore();
+        LOGGER.info("main timer task starts");
         Timer timer = new Timer(true);
         Date currDate = new Date((System.currentTimeMillis() / 1000) * 1000);
         currDate.setSeconds(0);
         currDate.setHours(0);
         currDate.setMinutes(0);
-
-
         List<Event> tempEventsForWork = new ArrayList<>();
         tempEventsForWork.addAll(localStore.getEvents(true, false, false));
-
-
         for (Event event :
                 tempEventsForWork) {
             if (!event.isStarted() && !event.isFinished()) {

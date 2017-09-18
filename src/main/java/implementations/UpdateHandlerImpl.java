@@ -16,6 +16,7 @@ import org.telegram.telegrambots.api.objects.Update;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 
 public class UpdateHandlerImpl implements UpdateHandler {
@@ -25,15 +26,16 @@ public class UpdateHandlerImpl implements UpdateHandler {
     private ChatWithCommand chat = null;
     private TcsMonitoringBot bot = Main.getTcsMonitoringBot();
     private EventParser eventParser = new EventParserImpl();
+    private final static Logger LOGGER = Logger.getLogger(UpdateHandlerImpl.class.getName());
 
     @Override
     public void handleUpdate(Update update, ChatWithCommand chat) {
+        LOGGER.info("handling update: " + update.getMessage());
         if (chat.getPreviousCommand() == Command.DELETE) {
             doAfterDeleteCommand();
         } else {
             if (update.hasMessage() && update.getMessage().hasText()) {
                 Command command = checkCommand(update.getMessage().getText());
-                System.out.println(command);
                 switch (command) {
                     case START:
                         doStartCommand();
@@ -83,24 +85,30 @@ public class UpdateHandlerImpl implements UpdateHandler {
     }
 
     private void doStartCommand() {
-
+        LOGGER.info("doStartCommand");
         if (!localStore.isAlreadyRegisteredUser(update.getMessage().getFrom())) {
             localStore.userRegistration(update.getMessage().getFrom(), new ChatWithCommand(update.getMessage().getChat()));
             if (update.getMessage().getFrom().getUserName() == null) {
                 bot.sendMessage(update.getMessage().getChatId(), Strings.SUCCESSFUL_REGISTRATION_WITHOUT_USERNAME);
-            } else
+                LOGGER.info("SUCCESSFUL_REGISTRATION_WITHOUT_USERNAME");
+            } else {
                 bot.sendMessage(update.getMessage().getChatId(), Strings.SUCCESSFUL_REGISTRATION);
+                LOGGER.info("SUCCESSFUL_REGISTRATION");
+            }
         } else {
             bot.sendMessage(update.getMessage().getChatId(), Strings.ALREADY_REGISTERED);
+            LOGGER.info("ALREADY_REGISTERED");
         }
     }
 
     private void doAddCommand() {
+        LOGGER.info("doAddCommand");
         bot.sendMessage(update.getMessage().getChatId(), Strings.ADD_EVENT);
         chat.setPreviousCommand(Command.ADD);
     }
 
     private void doDeleteCommand() {
+        LOGGER.info("doDeleteCommand");
         chat.setPreviousCommand(Command.DELETE);
         List<Event> eventList = localStore.getEventsListFilterByAuthor(update.getMessage().getFrom());
         chat.setEventListForDeleteCommand(eventList);
@@ -109,19 +117,23 @@ public class UpdateHandlerImpl implements UpdateHandler {
 
     private void doAfterDeleteCommand() {
         try {
+            LOGGER.info("doAfterDeleteCommand");
             int eventNumber = checkNumberCommand(update.getMessage().getText());
             Event eventForDelete = chat.getEventListForDeleteCommand().get(eventNumber);
             localStore.deleteEvent(eventForDelete);
             bot.sendMessage(chat.getId(), Strings.SUCCESSFUL_DELETE + "" + eventForDelete);
+            LOGGER.info("SUCCESSFUL_DELETE");
             chat.setEventListForDeleteCommand(null);
             chat.setPreviousCommand(Command.NOTHING);
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
             bot.sendMessage(chat.getId(), Strings.CANT_DELETE_EVENT);
+            LOGGER.info("CANT_DELETE_EVENT");
             chat.setPreviousCommand(Command.NOTHING);
         }
     }
 
     private void doNothingCommand() {
+        LOGGER.info("doNothingCommand");
         if (chat.getPreviousCommand() == Command.ADD || chat.getPreviousCommand() == Command.NOTHING) {
             String[] inStrings = update.getMessage().getText().split("\n");
             List<Event> events = new ArrayList<>();
@@ -132,28 +144,37 @@ public class UpdateHandlerImpl implements UpdateHandler {
                     events.add(e);
                 } catch (NotEnoughArgsToParseException e1) {
                     bot.sendMessage(chat.getId(), Strings.WRONG_EVENT + s);
+                    LOGGER.info("WRONG_EVENT");
                 } catch (NotRegisteredUserException e1) {
                     bot.sendMessage(chat.getId(), Strings.NOT_REGISTERED_USER + s);
+                    LOGGER.info("NOT_REGISTERED_USER");
                 } catch (DateParseException e1) {
                     bot.sendMessage(chat.getId(), Strings.CANT_PARSE_DATE + s);
+                    LOGGER.info("CANT_PARSE_DATE");
                 } catch (DateFromPastException e) {
+                    LOGGER.info("DATE_FROM_PAST");
                     bot.sendMessage(chat.getId(), Strings.DATE_FROM_PAST + s);
                 }
             }
             if (!events.isEmpty()) {
                 localStore.addEvents(events);
                 bot.sendMessage(chat.getId(), Strings.EVENTS_ADDED);
+                LOGGER.info("EVENTS_ADDED");
             }
             chat.setPreviousCommand(Command.NOTHING);
         }
     }
 
     private void doListCommand() {
+        LOGGER.info("doListCommand");
         String listOfEventsString = createListOfEvents(localStore.getEventsListFilterByAuthor(update.getMessage().getFrom()), false);
-        if (!listOfEventsString.equals(""))
+        if (!listOfEventsString.equals("")) {
             bot.sendMessage(chat.getId(), Strings.LIST_TEXT + listOfEventsString);
-        else
+            LOGGER.info("LIST_TEXT_SUCCESSFUL_SEND");
+        } else {
             bot.sendMessage(chat.getId(), Strings.EMPTY_LIST_OF_EVENTS);
+            LOGGER.info("EMPTY_LIST_OF_EVENTS");
+        }
     }
 
 
@@ -168,7 +189,6 @@ public class UpdateHandlerImpl implements UpdateHandler {
 
             if (localStore.updateQueuePeek() != null) {
                 update = localStore.updateQueuePool();
-                System.out.println(update);
                 if (update.hasMessage() && update.getMessage().hasText() && !localStore.containsChatById(update.getMessage().getChatId())) {
                     localStore.putToChats(update.getMessage().getChatId(), new ChatWithCommand(update.getMessage().getChat()));
                     chat = localStore.getChatById(update.getMessage().getChatId());

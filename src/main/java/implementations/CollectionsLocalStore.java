@@ -18,6 +18,7 @@ public class CollectionsLocalStore implements LocalStore {
     private Map<Long, ChatWithCommand> chats;
     private Map<User, ChatWithCommand> usersToChat;
     private Queue<Update> updateQueue;
+    private MainTimerTask mainTimerTask;
 
     private CollectionsLocalStore() {
         eventsList = new ArrayList<>();
@@ -26,6 +27,7 @@ public class CollectionsLocalStore implements LocalStore {
         chats = new HashMap<>();
         usersToChat = new HashMap<>();
         updateQueue = new ArrayDeque<>();
+        mainTimerTask = new MainTimerTask();
     }
 
     public static CollectionsLocalStore getInstance() {
@@ -38,25 +40,26 @@ public class CollectionsLocalStore implements LocalStore {
             registeredUsersNames.put(user.getUserName(), user);
         }
         usersToChat.put(user, chat);
+        LOGGER.info("Registered user: " + user);
     }
 
     public boolean isAlreadyRegisteredUser(User user) {
         try {
             return registeredUsers.containsKey(user.getId()) && registeredUsersNames.containsKey(user.getUserName());
-        } catch (NullPointerException e){
+        } catch (NullPointerException e) {
             return false;
         }
-
     }
 
     public void addEvents(List<Event> eventsList) {
         this.eventsList.addAll(eventsList);
-        System.out.println(this.eventsList);
-        new MainTimerTask().run();
+        mainTimerTask.run();
+        LOGGER.info("Added events: " + eventsList);
     }
 
     public void deleteEvent(Event event) {
         event.setActive(false);
+        LOGGER.info("Delete event: " + event);
     }
 
     public List<Event> getEvents(boolean isActive, boolean isStarted, boolean isFinished) {
@@ -86,11 +89,12 @@ public class CollectionsLocalStore implements LocalStore {
 
     @Override
     public ChatWithCommand putToChats(Long id, ChatWithCommand chat) {
+        LOGGER.info("New chat added to chats: " + chat);
         return chats.put(id, chat);
     }
 
     @Override
-    public boolean containsChatById(Long id){
+    public boolean containsChatById(Long id) {
         return chats.containsKey(id);
     }
 
@@ -122,7 +126,6 @@ public class CollectionsLocalStore implements LocalStore {
                 resultList.add(e);
             }
         }
-        System.out.println("getEventsListFilterByAuthor, Author: " + author + ", list: " + resultList);
         return resultList;
     }
 }
