@@ -2,8 +2,8 @@ package interfaces;
 
 import models.Event;
 import models.ChatWithCommand;
-import org.telegram.telegrambots.api.objects.Update;
-import org.telegram.telegrambots.api.objects.User;
+import models.Update;
+import models.User;
 
 import java.util.List;
 import java.util.Map;

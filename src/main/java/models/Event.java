@@ -1,6 +1,6 @@
 package models;
 
-import org.telegram.telegrambots.api.objects.User;
+import models.User;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

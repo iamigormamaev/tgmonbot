@@ -30,7 +30,7 @@ public class TcsMonitoringBot extends TelegramLongPollingBot {
     }
 
     public void onUpdateReceived(Update update) {
-        localStore.updateQueueAdd(update);
+        localStore.updateQueueAdd(new models.Update(update));
     }
 
     public String getBotUsername() {

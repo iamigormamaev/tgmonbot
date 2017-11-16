@@ -8,7 +8,7 @@ import factories.LocalStoreFactory;
 import interfaces.EventParser;
 import interfaces.LocalStore;
 import models.Event;
-import org.telegram.telegrambots.api.objects.User;
+import models.User;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;

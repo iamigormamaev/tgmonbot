@@ -6,63 +6,72 @@ import org.telegram.telegrambots.api.objects.Chat;
 import java.util.List;
 
 public class ChatWithCommand {
-    private Chat chat;
     private Command previousCommand;
-    private List <Event> eventListForDeleteCommand = null;
-
-    public List<Event> getEventListForDeleteCommand() {
-        return eventListForDeleteCommand;
-    }
-
-    public void setEventListForDeleteCommand(List<Event> eventListForDeleteCommand) {
-        this.eventListForDeleteCommand = eventListForDeleteCommand;
-    }
+    private List<Event> eventListForDeleteCommand = null;
+    private Long id;
+    private String title;
+    private String firstName;
+    private String lastName;
+    private String userName;
+    private Boolean allMembersAreAdministrators;
 
     public ChatWithCommand(Chat chat) {
-        this.chat = chat;
+
+        id = chat.getId();
+        title = chat.getTitle();
+        firstName = chat.getFirstName();
+        lastName = chat.getLastName();
+        userName = chat.getUserName();
+        allMembersAreAdministrators = chat.getAllMembersAreAdministrators();
         previousCommand = Command.NOTHING;
-
-
     }
 
     public Long getId() {
-        return chat.getId();
+        return id;
     }
 
-    public Boolean isGroupChat() {
-        return chat.isGroupChat();
-    }
-
-    public Boolean isChannelChat() {
-        return chat.isChannelChat();
-    }
-
-    public Boolean isUserChat() {
-        return chat.isUserChat();
-    }
-
-    public Boolean isSuperGroupChat() {
-        return chat.isSuperGroupChat();
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getTitle() {
-        return chat.getTitle();
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getFirstName() {
-        return chat.getFirstName();
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
     public String getLastName() {
-        return chat.getLastName();
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public String getUserName() {
-        return chat.getUserName();
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public Boolean getAllMembersAreAdministrators() {
-        return chat.getAllMembersAreAdministrators();
+        return allMembersAreAdministrators;
+    }
+
+    public void setAllMembersAreAdministrators(Boolean allMembersAreAdministrators) {
+        this.allMembersAreAdministrators = allMembersAreAdministrators;
     }
 
     public Command getPreviousCommand() {
@@ -71,6 +80,14 @@ public class ChatWithCommand {
 
     public void setPreviousCommand(Command previousCommand) {
         this.previousCommand = previousCommand;
+    }
+
+    public List<Event> getEventListForDeleteCommand() {
+        return eventListForDeleteCommand;
+    }
+
+    public void setEventListForDeleteCommand(List<Event> eventListForDeleteCommand) {
+        this.eventListForDeleteCommand = eventListForDeleteCommand;
     }
 }
 

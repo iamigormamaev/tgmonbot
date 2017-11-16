@@ -6,7 +6,7 @@ import implementations.EventParserImpl;
 import interfaces.EventParser;
 import org.junit.Before;
 import org.junit.Test;
-import org.telegram.telegrambots.api.objects.User;
+import models.User;
 
 import java.util.Date;
 import java.util.HashMap;

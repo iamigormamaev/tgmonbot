@@ -3,8 +3,8 @@ package implementations;
 import interfaces.LocalStore;
 import models.Event;
 import models.ChatWithCommand;
-import org.telegram.telegrambots.api.objects.Update;
-import org.telegram.telegrambots.api.objects.User;
+import models.Update;
+import models.User;
 
 import java.util.*;
 import java.util.logging.Logger;
@@ -122,7 +122,7 @@ public class CollectionsLocalStore implements LocalStore {
         List<Event> resultList = new ArrayList<>();
         for (Event e :
                 eventsList) {
-            if (e.isActive() && !e.isFinished() && e.getAuthor().getId().equals(author.getId())) {
+            if (e.isActive() && !e.isFinished() && e.getAuthor().getId()==author.getId()) {
                 resultList.add(e);
             }
         }

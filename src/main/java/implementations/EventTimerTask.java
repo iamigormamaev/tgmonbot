@@ -23,7 +23,7 @@ public class EventTimerTask extends TimerTask {
     public void run() {
         LOGGER.info("Event timer runs: " + event.getMessageWithAuthor());
         if (event.isActive()) {
-            if (event.getUser().getId().equals(event.getAuthor().getId()))
+            if (event.getUser().getId()==(event.getAuthor().getId()))
                 bot.sendMessage(localStore.getChatByUser(event.getUser()).getId(), event.getMessageWithoutAuthor());
             else
                 bot.sendMessage(localStore.getChatByUser(event.getUser()).getId(), event.getMessageWithAuthor());

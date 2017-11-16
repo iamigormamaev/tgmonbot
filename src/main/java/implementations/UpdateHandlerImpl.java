@@ -12,7 +12,7 @@ import interfaces.Strings;
 import interfaces.UpdateHandler;
 import models.ChatWithCommand;
 import models.Event;
-import org.telegram.telegrambots.api.objects.Update;
+import models.Update;
 
 import java.util.ArrayList;
 import java.util.List;
