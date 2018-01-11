@@ -11,6 +11,7 @@ import interfaces.LocalStore;
 import interfaces.Strings;
 import interfaces.UpdateHandler;
 import models.ChatWithCommand;
+import models.Command;
 import models.Event;
 import models.Update;
 
@@ -49,11 +50,21 @@ public class UpdateHandlerImpl implements UpdateHandler {
                     case LIST:
                         doListCommand();
                         break;
+                    case HELP:
+                        doHelpCommand();
+                        break;
                     default:
                         doNothingCommand();
                 }
             }
         }
+    }
+
+    private void doHelpCommand() {
+        LOGGER.info("doHelpCommand");
+        bot.sendMessage(chat.getId(), Strings.HELP);
+        LOGGER.info("LIST_TEXT_SUCCESSFUL_SEND");
+
     }
 
 
@@ -69,6 +80,8 @@ public class UpdateHandlerImpl implements UpdateHandler {
                     return Command.DELETE;
                 case "/list":
                     return Command.LIST;
+                case "/help":
+                    return Command.HELP;
                 default:
                     return Command.NOTHING;
             }
@@ -87,11 +100,18 @@ public class UpdateHandlerImpl implements UpdateHandler {
     private void doStartCommand() {
         LOGGER.info("doStartCommand");
         if (!localStore.isAlreadyRegisteredUser(update.getMessage().getFrom())) {
-            localStore.userRegistration(update.getMessage().getFrom(), new ChatWithCommand(update.getMessage().getChat()));
+            localStore.userRegistration(update.getMessage().getFrom(), new ChatWithCommand(update.getMessage().getChat(), update.getMessage().getFrom()));
             if (update.getMessage().getFrom().getUserName() == null) {
                 bot.sendMessage(update.getMessage().getChatId(), Strings.SUCCESSFUL_REGISTRATION_WITHOUT_USERNAME);
                 LOGGER.info("SUCCESSFUL_REGISTRATION_WITHOUT_USERNAME");
             } else {
+                localStore.addOrUpdateChat(
+                        update.getMessage().getChatId(),
+                        new ChatWithCommand(
+                                update.getMessage().getChat(),
+                                update.getMessage().getFrom()
+                        )
+                );
                 bot.sendMessage(update.getMessage().getChatId(), Strings.SUCCESSFUL_REGISTRATION);
                 LOGGER.info("SUCCESSFUL_REGISTRATION");
             }
@@ -104,31 +124,37 @@ public class UpdateHandlerImpl implements UpdateHandler {
     private void doAddCommand() {
         LOGGER.info("doAddCommand");
         bot.sendMessage(update.getMessage().getChatId(), Strings.ADD_EVENT);
-        chat.setPreviousCommand(Command.ADD);
+        localStore.setChatPreviousCommand(chat, Command.ADD);
     }
 
     private void doDeleteCommand() {
         LOGGER.info("doDeleteCommand");
-        chat.setPreviousCommand(Command.DELETE);
+        localStore.setChatPreviousCommand(chat, Command.DELETE);
         List<Event> eventList = localStore.getEventsListFilterByAuthor(update.getMessage().getFrom());
-        chat.setEventListForDeleteCommand(eventList);
-        bot.sendMessage(chat.getId(), Strings.DELETE_TEXT + createListOfEvents(eventList, true));
+//        chat.setEventListForDeleteCommand(eventList);
+        if (!eventList.isEmpty()) {
+            bot.sendMessage(chat.getId(), Strings.DELETE_TEXT + createListOfEvents(eventList, true));
+        } else {
+            localStore.setChatPreviousCommand(chat, Command.NOTHING);
+            bot.sendMessage(chat.getId(), Strings.EMPTY_LIST_OF_EVENTS);
+        }
+
     }
 
     private void doAfterDeleteCommand() {
         try {
             LOGGER.info("doAfterDeleteCommand");
             int eventNumber = checkNumberCommand(update.getMessage().getText());
-            Event eventForDelete = chat.getEventListForDeleteCommand().get(eventNumber);
-            localStore.deleteEvent(eventForDelete);
-            bot.sendMessage(chat.getId(), Strings.SUCCESSFUL_DELETE + "" + eventForDelete);
+            Event eventForDelete = localStore.getEventsListFilterByAuthor(update.getMessage().getFrom()).get(eventNumber);
+            localStore.finishEvent(eventForDelete);
+            bot.sendMessage(chat.getId(), Strings.SUCCESSFUL_DELETE + "" + eventForDelete.toBeautifulString());
             LOGGER.info("SUCCESSFUL_DELETE");
-            chat.setEventListForDeleteCommand(null);
-            chat.setPreviousCommand(Command.NOTHING);
+//            chat.setEventListForDeleteCommand(null);
+            localStore.setChatPreviousCommand(chat, Command.NOTHING);
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
             bot.sendMessage(chat.getId(), Strings.CANT_DELETE_EVENT);
             LOGGER.info("CANT_DELETE_EVENT");
-            chat.setPreviousCommand(Command.NOTHING);
+            localStore.setChatPreviousCommand(chat, Command.NOTHING);
         }
     }
 
@@ -143,13 +169,13 @@ public class UpdateHandlerImpl implements UpdateHandler {
                     Event e = eventParser.parse(s, update.getMessage().getFrom());
                     events.add(e);
                 } catch (NotEnoughArgsToParseException e1) {
-                    bot.sendMessage(chat.getId(), Strings.WRONG_EVENT + s);
+                    bot.sendMessage(chat.getId(), Strings.WRONG_EVENT + s + Strings.HELP_ANNOUNCEMENT);
                     LOGGER.info("WRONG_EVENT");
                 } catch (NotRegisteredUserException e1) {
                     bot.sendMessage(chat.getId(), Strings.NOT_REGISTERED_USER + s);
                     LOGGER.info("NOT_REGISTERED_USER");
                 } catch (DateParseException e1) {
-                    bot.sendMessage(chat.getId(), Strings.CANT_PARSE_DATE + s);
+                    bot.sendMessage(chat.getId(), Strings.CANT_PARSE_DATE + s + Strings.HELP_ANNOUNCEMENT);
                     LOGGER.info("CANT_PARSE_DATE");
                 } catch (DateFromPastException e) {
                     LOGGER.info("DATE_FROM_PAST");
@@ -161,7 +187,8 @@ public class UpdateHandlerImpl implements UpdateHandler {
                 bot.sendMessage(chat.getId(), Strings.EVENTS_ADDED);
                 LOGGER.info("EVENTS_ADDED");
             }
-            chat.setPreviousCommand(Command.NOTHING);
+            localStore.setChatPreviousCommand(chat, Command.NOTHING);
+
         }
     }
 
@@ -181,16 +208,19 @@ public class UpdateHandlerImpl implements UpdateHandler {
     public void pollingUpdates() {
 
         while (true) {
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
 
             if (localStore.updateQueuePeek() != null) {
                 update = localStore.updateQueuePool();
-                if (update.hasMessage() && update.getMessage().hasText() && !localStore.containsChatById(update.getMessage().getChatId())) {
-                    localStore.putToChats(update.getMessage().getChatId(), new ChatWithCommand(update.getMessage().getChat()));
+                if (update.hasMessage() &&
+                        update.getMessage().hasText() &&
+                        !localStore.containsChatById(update.getMessage().getChatId())) {
+                    localStore.addOrUpdateChat(
+                            update.getMessage().getChatId(),
+                            new ChatWithCommand(
+                                    update.getMessage().getChat(),
+                                    update.getMessage().getFrom()
+                            )
+                    );
                     chat = localStore.getChatById(update.getMessage().getChatId());
                     handleUpdate(update, chat);
                 } else {
@@ -198,7 +228,6 @@ public class UpdateHandlerImpl implements UpdateHandler {
                     handleUpdate(update, localStore.getChatById(update.getMessage().getChatId()));
                 }
             }
-
         }
     }
 
@@ -206,8 +235,8 @@ public class UpdateHandlerImpl implements UpdateHandler {
         String resultString = "";
         for (int i = 0; i < eventList.size(); i++) {
             if (addEventsIDs) {
-                resultString = resultString + "/" + i + " " + eventList.get(i) + "\n";
-            } else resultString = resultString + eventList.get(i) + "\n";
+                resultString = resultString + "/" + i + " " + eventList.get(i).toBeautifulString() + "\n";
+            } else resultString = resultString + eventList.get(i).toBeautifulString() + "\n";
         }
         return resultString;
     }

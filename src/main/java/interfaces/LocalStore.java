@@ -1,9 +1,6 @@
 package interfaces;
 
-import models.Event;
-import models.ChatWithCommand;
-import models.Update;
-import models.User;
+import models.*;
 
 import java.util.List;
 import java.util.Map;
@@ -17,19 +14,21 @@ public interface LocalStore {
 
     void addEvents(List<Event> eventsList);
 
-    void deleteEvent(Event event);
+    void finishEvent(Event event);
 
-    List<Event> getEvents(boolean isActive, boolean isStarted, boolean isFinished);
+    void startEvent(Event event);
 
-    ChatWithCommand getChatById (Long id);
+    List<Event> getEvents(EventStatus... statuses);
+
+    ChatWithCommand getChatById(Long id);
 
     boolean containsChatById(Long id);
 
-    ChatWithCommand putToChats (Long id, ChatWithCommand chat);
+    ChatWithCommand addOrUpdateChat(Long id, ChatWithCommand chat);
 
-    boolean isRegisteredUserName (String name);
+    boolean isRegisteredUserName(String name);
 
-    User getUserByName (String name);
+    User getUserByName(String name);
 
     Update updateQueuePeek();
 
@@ -39,5 +38,9 @@ public interface LocalStore {
 
     List<Event> getEventsListFilterByAuthor(User author);
 
-    ChatWithCommand getChatByUser (User user);
+    ChatWithCommand getChatByUser(User user);
+
+    void setChatPreviousCommand(ChatWithCommand chat, Command command);
+
+    void initStore();
 }

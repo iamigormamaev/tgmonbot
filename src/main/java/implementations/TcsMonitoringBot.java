@@ -18,6 +18,7 @@ public class TcsMonitoringBot extends TelegramLongPollingBot {
     private LocalStore localStore = new LocalStoreFactory().getDefaultLocalStore();
 
     public TcsMonitoringBot() {
+        localStore.initStore();
         Timer timer = new Timer(true);
         new MainTimerTask().run();
 
@@ -27,6 +28,7 @@ public class TcsMonitoringBot extends TelegramLongPollingBot {
         Date tomorrow = c.getTime();
 
         timer.schedule(new MainTimerTask(), tomorrow, 86400000);
+
     }
 
     public void onUpdateReceived(Update update) {

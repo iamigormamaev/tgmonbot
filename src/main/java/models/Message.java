@@ -204,4 +204,15 @@ public class Message {
     public boolean hasPhoto() {
         return message.hasPhoto();
     }
+
+    @Override
+    public String toString() {
+        return "Message{" +
+                "message=" + message +
+                ", from=" + from +
+                ", forwardFrom=" + forwardFrom +
+                ", newChatMember=" + newChatMember +
+                ", leftChatMember=" + leftChatMember +
+                '}';
+    }
 }

@@ -3,6 +3,7 @@ package implementations;
 import factories.LocalStoreFactory;
 import interfaces.LocalStore;
 import models.Event;
+import models.EventStatus;
 
 import java.util.*;
 import java.util.logging.Logger;
@@ -21,10 +22,10 @@ public class MainTimerTask extends TimerTask {
         currDate.setHours(0);
         currDate.setMinutes(0);
         List<Event> tempEventsForWork = new ArrayList<>();
-        tempEventsForWork.addAll(localStore.getEvents(true, false, false));
+        tempEventsForWork.addAll(localStore.getEvents(EventStatus.NEW));
         for (Event event :
                 tempEventsForWork) {
-            if (!event.isStarted() && !event.isFinished()) {
+            if (event.getStatus() == EventStatus.NEW) {
                 Date eventDateWithoutTime = new Date(event.getDate().getTime());
                 eventDateWithoutTime.setSeconds(0);
                 eventDateWithoutTime.setHours(0);

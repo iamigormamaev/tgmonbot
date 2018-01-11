@@ -80,4 +80,15 @@ public class Update {
     public boolean hasEditedChannelPost() {
         return update.hasEditedChannelPost();
     }
+
+    @Override
+    public String toString() {
+        return "Update{" +
+                "update=" + update +
+                ", message=" + message +
+                ", editedMessage=" + editedMessage +
+                ", channelPost=" + channelPost +
+                ", editedChannelPost=" + editedChannelPost +
+                '}';
+    }
 }

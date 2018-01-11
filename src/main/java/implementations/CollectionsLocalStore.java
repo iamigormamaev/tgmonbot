@@ -1,12 +1,11 @@
 package implementations;
 
 import interfaces.LocalStore;
-import models.Event;
-import models.ChatWithCommand;
-import models.Update;
-import models.User;
+import models.*;
 
 import java.util.*;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.logging.Logger;
 
 public class CollectionsLocalStore implements LocalStore {
@@ -20,13 +19,13 @@ public class CollectionsLocalStore implements LocalStore {
     private Queue<Update> updateQueue;
     private MainTimerTask mainTimerTask;
 
-    private CollectionsLocalStore() {
+    protected CollectionsLocalStore() {
         eventsList = new ArrayList<>();
         registeredUsersNames = new TreeMap<>();
         registeredUsers = new TreeMap<>();
         chats = new HashMap<>();
         usersToChat = new HashMap<>();
-        updateQueue = new ArrayDeque<>();
+        updateQueue = new LinkedBlockingQueue<>();
         mainTimerTask = new MainTimerTask();
     }
 
@@ -41,6 +40,7 @@ public class CollectionsLocalStore implements LocalStore {
         }
         usersToChat.put(user, chat);
         LOGGER.info("Registered user: " + user);
+
     }
 
     public boolean isAlreadyRegisteredUser(User user) {
@@ -57,16 +57,22 @@ public class CollectionsLocalStore implements LocalStore {
         LOGGER.info("Added events: " + eventsList);
     }
 
-    public void deleteEvent(Event event) {
-        event.setActive(false);
+    public void finishEvent(Event event) {
+        event.setStatus(EventStatus.FINISHED);
         LOGGER.info("Delete event: " + event);
     }
 
-    public List<Event> getEvents(boolean isActive, boolean isStarted, boolean isFinished) {
+    @Override
+    public void startEvent(Event event) {
+        event.setStatus(EventStatus.STARTED);
+        LOGGER.info("Start event: " + event);
+    }
+
+    public List<Event> getEvents(EventStatus... statuses) {
         List<Event> resultList = new ArrayList<>();
         for (Event e :
                 eventsList) {
-            if (e.isActive() == isActive && e.isStarted() == isStarted && e.isFinished() == isFinished) {
+            if (Arrays.asList(statuses).contains(e.getStatus())) {
                 resultList.add(e);
             }
         }
@@ -88,7 +94,7 @@ public class CollectionsLocalStore implements LocalStore {
     }
 
     @Override
-    public ChatWithCommand putToChats(Long id, ChatWithCommand chat) {
+    public ChatWithCommand addOrUpdateChat(Long id, ChatWithCommand chat) {
         LOGGER.info("New chat added to chats: " + chat);
         return chats.put(id, chat);
     }
@@ -122,10 +128,20 @@ public class CollectionsLocalStore implements LocalStore {
         List<Event> resultList = new ArrayList<>();
         for (Event e :
                 eventsList) {
-            if (e.isActive() && !e.isFinished() && e.getAuthor().getId()==author.getId()) {
+            if (e.getStatus() != EventStatus.FINISHED && e.getAuthor().getId() == author.getId()) {
                 resultList.add(e);
             }
         }
         return resultList;
+    }
+
+    @Override
+    public void setChatPreviousCommand(ChatWithCommand chat, Command command) {
+        chat.setPreviousCommand(command);
+    }
+
+    @Override
+    public void initStore() {
+
     }
 }
