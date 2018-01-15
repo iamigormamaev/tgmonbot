@@ -1,5 +1,6 @@
 package implementations;
 
+import Exceptions.DbProblemException;
 import interfaces.LocalStore;
 import models.*;
 
@@ -36,7 +37,7 @@ public class CollectionsLocalStore implements LocalStore {
     public void userRegistration(User user, ChatWithCommand chat) {
         registeredUsers.put(user.getId(), user);
         if (user.getUserName() != null) {
-            registeredUsersNames.put(user.getUserName(), user);
+            registeredUsersNames.put(user.getUserName().toLowerCase(), user);
         }
         usersToChat.put(user, chat);
         LOGGER.info("Registered user: " + user);
@@ -51,7 +52,7 @@ public class CollectionsLocalStore implements LocalStore {
         }
     }
 
-    public void addEvents(List<Event> eventsList) {
+    public void addEvents(List<Event> eventsList) throws DbProblemException {
         this.eventsList.addAll(eventsList);
         mainTimerTask.run();
         LOGGER.info("Added events: " + eventsList);
@@ -80,7 +81,7 @@ public class CollectionsLocalStore implements LocalStore {
     }
 
     public boolean isRegisteredUserName(String name) {
-        return registeredUsersNames.containsKey(name);
+        return registeredUsersNames.containsKey(name.toLowerCase());
     }
 
     @Override

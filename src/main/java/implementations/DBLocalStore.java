@@ -1,10 +1,12 @@
 package implementations;
 
+import Exceptions.DbProblemException;
 import interfaces.LocalStore;
 import models.*;
 import org.hibernate.ReplicationMode;
 import org.hibernate.Session;
 
+import javax.persistence.PersistenceException;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -36,16 +38,22 @@ public class DBLocalStore extends CollectionsLocalStore implements LocalStore {
     }
 
     @Override
-    public void addEvents(List<Event> eventsList) {
+    public void addEvents(List<Event> eventsList) throws DbProblemException {
         Session s = HibernateUtil.getSessionFactory().openSession();
-        s.beginTransaction();
-        for (int i = 0; i < eventsList.size(); i++) {
-            eventsList.set(i, (Event) s.merge(eventsList.get(i)));
-        }
-        s.getTransaction().commit();
-        s.close();
+        try {
 
-        super.addEvents(eventsList);
+            s.beginTransaction();
+            for (int i = 0; i < eventsList.size(); i++) {
+                eventsList.set(i, (Event) s.merge(eventsList.get(i)));
+            }
+            s.getTransaction().commit();
+            s.close();
+            super.addEvents(eventsList);
+        } catch (PersistenceException e) {
+            s.getTransaction().rollback();
+            e.printStackTrace();
+            throw new DbProblemException(e.getMessage());
+        }
     }
 
     @Override
@@ -120,7 +128,11 @@ public class DBLocalStore extends CollectionsLocalStore implements LocalStore {
                 events.set(i, (Event) s.merge(events.get(i)));
             }
         }
-        super.addEvents(s.createQuery(eventCriteria).getResultList());
+        try {
+            super.addEvents(s.createQuery(eventCriteria).getResultList());
+        } catch (DbProblemException e) {
+            e.printStackTrace();
+        }
 
         s.close();
     }

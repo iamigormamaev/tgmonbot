@@ -9,14 +9,17 @@ import org.telegram.telegrambots.ApiContextInitializer;
 import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.telegrambots.exceptions.TelegramApiRequestException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.LogManager;
 
 public class Main {
     private static TcsMonitoringBot tcsMonitoringBot;
 
     public static void main(String[] args) {
+        loggerInit();
         ApiContextInitializer.init();
         TelegramBotsApi botsApi = new TelegramBotsApi();
         tcsMonitoringBot = new TcsMonitoringBot();
@@ -27,32 +30,17 @@ public class Main {
         }
         UpdateHandler updateHandler = new UpdateHandlerImpl();
         updateHandler.pollingUpdates();
-
-/*        User u = new User();
-        u.setFirstName("lol");
-        u.setId(1);
-
-        ChatWithCommand chat = new ChatWithCommand();
-        chat.setFirstName("lol");
-        chat.setId(1L);
-        chat.setPreviousCommand(Command.NOTHING);
-
-        new DBLocalStore().userRegistration(u, chat);
-
-        List<Event> eventList = new ArrayList<>();
-        Event e = new Event();
-        e.setAuthor(u);
-        e.setUser(u);
-        e.setDate(new Date(System.currentTimeMillis()));
-        eventList.add(e);
-
-
-        new DBLocalStore().addEvents(eventList);*/
-
-
     }
 
     public static TcsMonitoringBot getTcsMonitoringBot() {
         return tcsMonitoringBot;
+    }
+
+    private static void loggerInit() {
+        try {
+            LogManager.getLogManager().readConfiguration(Main.class.getResourceAsStream("/logging.properties"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

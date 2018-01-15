@@ -1,5 +1,6 @@
 package interfaces;
 
+import Exceptions.DbProblemException;
 import models.*;
 
 import java.util.List;
@@ -12,7 +13,7 @@ public interface LocalStore {
 
     void userRegistration(User user, ChatWithCommand chat);
 
-    void addEvents(List<Event> eventsList);
+    void addEvents(List<Event> eventsList) throws DbProblemException;
 
     void finishEvent(Event event);
 

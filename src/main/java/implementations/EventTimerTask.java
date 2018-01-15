@@ -23,7 +23,9 @@ public class EventTimerTask extends TimerTask {
     @Override
     public void run() {
         TcsMonitoringBot bot = Main.getTcsMonitoringBot();
-        String eventMessageWithAuthor = event.getAuthor().getFirstName() + " " + event.getUser().getLastName() + event.getUser().getFirstName() + ": " + event.getMessage();
+        String eventMessageWithAuthor = event.getAuthor().getLastName() == null ?
+                event.getAuthor().getFirstName() + ": " + event.getMessage() :
+                event.getAuthor().getFirstName() + " " + event.getAuthor().getLastName() + ": " + event.getMessage();
         LOGGER.info("Event timer runs: " + eventMessageWithAuthor);
         if (event.getStatus() != EventStatus.FINISHED) {
             if (event.getUser().getId() == (event.getAuthor().getId())) {

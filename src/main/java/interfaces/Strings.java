@@ -8,6 +8,7 @@ public interface Strings {
             "Помощь - /help";
     String ALREADY_REGISTERED = "Вы уже были зарегистрированы. Все хорошо, можете пользоваться ботом.";
     String WRONG_EVENT = "Напоминание не добавлено. Невозможно распознать строку: ";
+    String DB_PROBLEMS = "По техническим причинам напоминания не добавлены.";
     String NOT_REGISTERED_USER = "Напоминание не добавлено. Пользователь не зарегистрирован: ";
     String CANT_PARSE_DATE = "Напоминание не добавлено. Невозможно распознать дату или пользователя: ";
     String HELP_ANNOUNCEMENT = "\n Помощь - /help";

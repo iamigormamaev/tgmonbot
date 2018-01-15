@@ -32,7 +32,7 @@ public class EventParserImpl implements EventParser {
 //          LOGGER.info("parsing string: \"" + inString + "\" author: " + author);
             inString = inString.trim();
             String[] words = inString.split("\\s");
-            String userName = words[0];
+            String userName = words[0].toLowerCase();
             String dateTimeString = words[1] + " " + words[2];
             StringBuilder message = new StringBuilder("");
             if (userName.charAt(0) == '@') {

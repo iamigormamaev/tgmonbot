@@ -1,10 +1,7 @@
 package implementations;
 
 
-import Exceptions.DateFromPastException;
-import Exceptions.DateParseException;
-import Exceptions.NotEnoughArgsToParseException;
-import Exceptions.NotRegisteredUserException;
+import Exceptions.*;
 import factories.LocalStoreFactory;
 import interfaces.EventParser;
 import interfaces.LocalStore;
@@ -183,9 +180,16 @@ public class UpdateHandlerImpl implements UpdateHandler {
                 }
             }
             if (!events.isEmpty()) {
-                localStore.addEvents(events);
-                bot.sendMessage(chat.getId(), Strings.EVENTS_ADDED);
-                LOGGER.info("EVENTS_ADDED");
+                try {
+                    localStore.addEvents(events);
+
+
+                    bot.sendMessage(chat.getId(), Strings.EVENTS_ADDED);
+                    LOGGER.info("EVENTS_ADDED");
+                } catch (DbProblemException e) {
+                    bot.sendMessage(chat.getId(), Strings.DB_PROBLEMS);
+                    LOGGER.info("EVENTS_DONT_ADDED_EXCEPTION");
+                }
             }
             localStore.setChatPreviousCommand(chat, Command.NOTHING);
 
