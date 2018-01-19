@@ -31,6 +31,7 @@ public class EventParserImpl implements EventParser {
         try {
 //          LOGGER.info("parsing string: \"" + inString + "\" author: " + author);
             inString = inString.trim();
+            User user = author;
             String[] words = inString.split("\\s");
             String userName = words[0].toLowerCase();
             String dateTimeString = words[1] + " " + words[2];
@@ -40,11 +41,11 @@ public class EventParserImpl implements EventParser {
             }
             if (!localStore.isRegisteredUserName(userName)) {
                 dateTimeString = words[0] + " " + words[1];
-                userName = author.getUserName();
                 for (int i = 2; i < words.length; i++) {
                     message.append(words[i] + " ");
                 }
             } else {
+                user = localStore.getUserByName(userName);
                 for (int i = 3; i < words.length; i++) {
                     message.append(words[i] + " ");
                 }
@@ -66,7 +67,7 @@ public class EventParserImpl implements EventParser {
                 LOGGER.warning("DateFromPastException was throw for string: \"" + inString + "\"");
                 throw new DateFromPastException();
             }
-            Event resultEvent = new Event(author, localStore.getUserByName(userName), date, message.toString().trim());
+            Event resultEvent = new Event(author, user, date, message.toString().trim());
             LOGGER.info("success parsing: \"" + inString + "\" author: " + author + " to event: " + resultEvent);
             return resultEvent;
         } catch (ArrayIndexOutOfBoundsException e) {

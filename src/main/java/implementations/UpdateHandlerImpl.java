@@ -212,7 +212,11 @@ public class UpdateHandlerImpl implements UpdateHandler {
     public void pollingUpdates() {
 
         while (true) {
-
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             if (localStore.updateQueuePeek() != null) {
                 update = localStore.updateQueuePool();
                 if (update.hasMessage() &&
